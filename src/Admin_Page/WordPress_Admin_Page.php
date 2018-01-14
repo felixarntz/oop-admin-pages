@@ -15,7 +15,8 @@ namespace Leaves_And_Love\OOP_Admin_Pages\Admin_Page;
  */
 class WordPress_Admin_Page extends Abstract_Admin_Page {
 
-	const CAPABILITY = 'capability';
+	const CAPABILITY  = 'capability';
+	const ADMIN_PANEL = 'admin_panel';
 
 	/**
 	 * Gets the URL of the admin page.
@@ -27,7 +28,20 @@ class WordPress_Admin_Page extends Abstract_Admin_Page {
 	public function get_url() : string {
 		$parent_file = $this->get_parent_file();
 
-		return add_query_arg( 'page', $this->getConfigKey( self::SLUG ), admin_url( $parent_file ) );
+		$admin_panel = $this->hasConfigKey( self::ADMIN_PANEL ) ? $this->getConfigKey( self::ADMIN_PANEL ) : 'site';
+
+		switch ( $admin_panel ) {
+			case 'user':
+				$base_url = user_admin_url( $parent_file );
+				break;
+			case 'network':
+				$base_url = network_admin_url( $parent_file );
+				break;
+			default:
+				$base_url = admin_url( $parent_file );
+		}
+
+		return add_query_arg( 'page', $this->getConfigKey( self::SLUG ), $base_url );
 	}
 
 	/**
@@ -38,10 +52,23 @@ class WordPress_Admin_Page extends Abstract_Admin_Page {
 	public function register() {
 		$callback = $this->get_register_hook_callback();
 
-		if ( doing_action( 'admin_menu' ) ) {
+		$admin_panel = $this->hasConfigKey( self::ADMIN_PANEL ) ? $this->getConfigKey( self::ADMIN_PANEL ) : 'site';
+
+		switch ( $admin_panel ) {
+			case 'user':
+				$hook_name = 'user_admin_menu';
+				break;
+			case 'network':
+				$hook_name = 'network_admin_menu';
+				break;
+			default:
+				$hook_name = 'admin_menu';
+		}
+
+		if ( doing_action( $hook_name ) ) {
 			call_user_func( $callback );
 		} else {
-			add_action( 'admin_menu', $callback );
+			add_action( $hook_name, $callback );
 		}
 	}
 
