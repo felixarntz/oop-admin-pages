@@ -27,7 +27,8 @@
     }
   },
   "require": {
-    "php": ">=7.0"
+    "php": ">=7.0",
+    "brightnucleus/config": "~0.4"
   },
   "require-dev": {
     "codeclimate/php-test-reporter": "dev-master",
