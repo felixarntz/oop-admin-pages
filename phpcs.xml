@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="OOP Admin Pages PHPCS Rules">
+	<description>A custom set of PHPCS rules for OOP Admin Pages.</description>
+
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName"/>
+		<exclude name="WordPress.VIP.SuperGlobalInputUsage"/>
+	</rule>
+</ruleset>

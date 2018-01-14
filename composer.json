@@ -1,0 +1,36 @@
+{
+  "name": "felixarntz/oop-admin-pages",
+  "description": "An OOP library to register admin pages in a sane way. Focused on WordPress, but easily reusable in any other environment.",
+  "version": "1.0.0",
+  "license": "GPL-2.0",
+  "keywords": [
+    "admin pages",
+    "oop",
+    "library",
+    "wordpress"
+  ],
+  "homepage": "https://github.com/felixarntz/oop-admin-pages",
+  "authors": [
+    {
+      "name": "Felix Arntz",
+      "email": "felix-arntz@leaves-and-love.net",
+      "homepage": "https://leaves-and-love.net",
+      "role": "Lead Developer"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/felixarntz/oop-admin-pages/issues"
+  },
+  "autoload": {
+    "psr-4": {
+      "Leaves_And_Love\\OOP_Admin_Pages\\": "src"
+    }
+  },
+  "require": {
+    "php": ">=7.0"
+  },
+  "require-dev": {
+    "codeclimate/php-test-reporter": "dev-master",
+    "phpunit/phpunit": "6.*"
+  }
+}
