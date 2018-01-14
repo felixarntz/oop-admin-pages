@@ -25,6 +25,7 @@ use Leaves_And_Love\OOP_Admin_Pages\Admin_Page_Factory\WordPress_Admin_Page_Fact
 use Leaves_And_Love\OOP_Admin_Pages\Admin_Page\WordPress_Admin_Page as Page;
 use Leaves_And_Love\OOP_Admin_Pages\Admin_Page\WordPress_Admin_Menu_Page as Menu_Page;
 use Leaves_And_Love\OOP_Admin_Pages\Admin_Page\WordPress_Admin_Submenu_Page as Submenu_Page;
+use Leaves_And_Love\OOP_Admin_Pages\Admin_Page\WordPress_Admin_Panels\WordPress_Admin_Panels as Panels;
 use BrightNucleus\Config\Config;
 
 if ( ! interface_exists( 'Leaves_And_Love\OOP_Admin_Pages\Admin_Page' ) ) {
@@ -58,6 +59,7 @@ add_action( 'init', function() {
 				Menu_Page::TITLE           => __( 'Menu Page', 'oop-admin-pages' ),
 				Menu_Page::MENU_TITLE      => __( 'Menu', 'oop-admin-pages' ),
 				Menu_Page::CAPABILITY      => 'manage_options',
+				Menu_Page::ADMIN_PANEL     => Panels::SITE,
 				Menu_Page::RENDER_CALLBACK => function( $config ) {
 					?>
 					<div class="wrap">
@@ -74,6 +76,7 @@ add_action( 'init', function() {
 				Submenu_Page::TITLE           => __( 'Submenu Page', 'oop-admin-pages' ),
 				Submenu_Page::MENU_TITLE      => __( 'Submenu', 'oop-admin-pages' ),
 				Submenu_Page::CAPABILITY      => 'manage_options',
+				Submenu_Page::ADMIN_PANEL     => Panels::SITE,
 				Submenu_Page::PARENT_SLUG     => 'my-menu-page',
 				Submenu_Page::RENDER_CALLBACK => function( $config ) {
 					?>
@@ -90,6 +93,7 @@ add_action( 'init', function() {
 				Page::SLUG              => 'my-page',
 				Page::TITLE             => __( 'Page without Menu', 'oop-admin-pages' ),
 				Page::CAPABILITY        => 'manage_options',
+				Page::ADMIN_PANEL       => Panels::SITE,
 				Page_Factory::SKIP_MENU => true,
 				Page::RENDER_CALLBACK   => function( $config ) {
 					?>
@@ -106,6 +110,7 @@ add_action( 'init', function() {
 				Submenu_Page::SLUG                => 'send-email',
 				Submenu_Page::TITLE               => __( 'Send Email', 'oop-admin-pages' ),
 				Submenu_Page::CAPABILITY          => 'manage_options',
+				Submenu_Page::ADMIN_PANEL         => Panels::SITE,
 				Submenu_Page::PARENT_SLUG         => 'tools.php',
 				Submenu_Page::RENDER_CALLBACK     => function( $config ) {
 					?>
@@ -211,6 +216,23 @@ add_action( 'init', function() {
 
 					wp_safe_redirect( add_query_arg( 'result', $result, wp_get_referer() ) );
 					exit;
+				},
+			),
+
+			// This is an admin menu page for the network admin panel.
+			array(
+				Menu_Page::SLUG            => 'my-network-menu-page',
+				Menu_Page::TITLE           => __( 'Network Menu Page', 'oop-admin-pages' ),
+				Menu_Page::MENU_TITLE      => __( 'Network Menu', 'oop-admin-pages' ),
+				Menu_Page::CAPABILITY      => 'manage_network_options',
+				Menu_Page::ADMIN_PANEL     => Panels::NETWORK,
+				Menu_Page::RENDER_CALLBACK => function( $config ) {
+					?>
+					<div class="wrap">
+						<h1><?php echo esc_html( $config['title'] ); ?></h1>
+						<p class="description"><?php esc_html_e( 'This is a network menu page.', 'oop-admin-pages' ); ?></p>
+					</div>
+					<?php
 				},
 			),
 		),
