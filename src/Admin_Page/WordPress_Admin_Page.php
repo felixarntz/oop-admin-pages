@@ -8,6 +8,9 @@
 
 namespace Leaves_And_Love\OOP_Admin_Pages\Admin_Page;
 
+use Leaves_And_Love\OOP_Admin_Pages\Admin_Page\WordPress_Admin_Panels\WordPress_Admin_Panel;
+use Leaves_And_Love\OOP_Admin_Pages\Admin_Page\WordPress_Admin_Panels\WordPress_Admin_Panels;
+
 /**
  * Class representing a basic WordPress admin page.
  *
@@ -28,18 +31,8 @@ class WordPress_Admin_Page extends Abstract_Admin_Page {
 	public function get_url() : string {
 		$parent_file = $this->get_parent_file();
 
-		$admin_panel = $this->hasConfigKey( self::ADMIN_PANEL ) ? $this->getConfigKey( self::ADMIN_PANEL ) : 'site';
-
-		switch ( $admin_panel ) {
-			case 'user':
-				$base_url = user_admin_url( $parent_file );
-				break;
-			case 'network':
-				$base_url = network_admin_url( $parent_file );
-				break;
-			default:
-				$base_url = admin_url( $parent_file );
-		}
+		$url_callback = $this->get_admin_panel()->get_url_callback();
+		$base_url     = call_user_func( $url_callback, $parent_file );
 
 		return add_query_arg( 'page', $this->getConfigKey( self::SLUG ), $base_url );
 	}
@@ -52,24 +45,28 @@ class WordPress_Admin_Page extends Abstract_Admin_Page {
 	public function register() {
 		$callback = $this->get_register_hook_callback();
 
-		$admin_panel = $this->hasConfigKey( self::ADMIN_PANEL ) ? $this->getConfigKey( self::ADMIN_PANEL ) : 'site';
-
-		switch ( $admin_panel ) {
-			case 'user':
-				$hook_name = 'user_admin_menu';
-				break;
-			case 'network':
-				$hook_name = 'network_admin_menu';
-				break;
-			default:
-				$hook_name = 'admin_menu';
-		}
+		$hook_name = $this->get_admin_panel()->get_hook_name();
 
 		if ( doing_action( $hook_name ) ) {
 			call_user_func( $callback );
 		} else {
 			add_action( $hook_name, $callback );
 		}
+	}
+
+	/**
+	 * Gets the admin panel instance this admin page is part of.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return WordPress_Admin_Panel Admin panel instance.
+	 */
+	protected function get_admin_panel() : WordPress_Admin_Panel {
+		if ( $this->hasConfigKey( self::ADMIN_PANEL ) ) {
+			return WordPress_Admin_Panels::get_panel( $this->getConfigKey( self::ADMIN_PANEL ) );
+		}
+
+		return WordPress_Admin_Panels::get_current_panel();
 	}
 
 	/**
